@@ -1,0 +1,24 @@
+{
+  "name": "trim-object",
+  "version": "1.0.0",
+  "description": "Pick keys from an object, recursively",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape ./test"
+  },
+  "keywords": [
+    "trim",
+    "object",
+    "object-trim",
+    "trim-object",
+    "data-shake",
+    "data-shaking",
+    "data-trim",
+    "data-trimmer"
+  ],
+  "author": "Brian Mullan <bmullan91@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "tape": "^4.6.0"
+  }
+}
