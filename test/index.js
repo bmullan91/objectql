@@ -1,68 +1,109 @@
+/* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
 const tape = require('tape');
-const trimObject = require('../');
+const objectql = require('../');
 
 // shortcuts
 const test = tape.test;
 
-test('it should return the same data if its falsey', function(t) {
+test('it should return the same data if its falsey', (t) => {
   t.plan(1);
   const data = null;
-  const actual = trimObject(data);
+  const actual = objectql(data);
   const expected = data;
   t.equal(actual, expected);
 });
 
-test('if no trimmer object passed returns original object', function(t) {
+test('it should return the same object if the query is undefined', (t) => {
   t.plan(1);
-  const data = {a: 'a', b: ['b'], c: { d: 'd'} };
-  const actual = trimObject(data);
+  const data = {
+    a: 'a',
+    b: ['b'],
+    c: {
+      d: 'd'
+    }
+  };
+  const actual = objectql(data);
   const expected = data;
 
   t.deepEqual(actual, expected);
 });
 
-test('it should throw an error if trimmer.$whiteList isn\'t and array', function(t) {
+test('it should return the same object if the query is null', (t) => {
   t.plan(1);
-  t.throws(trimObject.bind(null, {}, { $whiteList: 'bla' }))
-});
-
-test('empty whiteList in trimmer object', function(t) {
-  t.plan(1);
-  const trimmer = {
-    $whiteList: []
-  };
-
   const data = {
     a: 'a',
-    b: 'b'
+    b: ['b'],
+    c: {
+      d: 'd'
+    }
   };
-
-  const actual = trimObject(data, trimmer);
-  const expected = {};
-
-  t.deepEqual(actual, expected, 'should be empty - since the $whiteList array was empty');
-});
-
-test('it should pick string-keys from the $whiteList array', function(t) {
-  t.plan(1);
-
-  const data = {
-    a: 'a',
-    b: 'b',
-    c: 'c'
-  };
-  const whiteList = ['a', 'b'];
-
-  const actual = trimObject(data, { $whiteList: whiteList });
-  const expected = {
-    a: 'a',
-    b: 'b'
-  };
+  const actual = objectql(data, null);
+  const expected = data;
 
   t.deepEqual(actual, expected);
 });
 
-test('it should operate on other keys in the trimmer object recursively', function(t) {
+test('it should return the same object if the query is an empty string', (t) => {
+  t.plan(1);
+  const data = {
+    a: 'a',
+    b: ['b'],
+    c: {
+      d: 'd'
+    }
+  };
+  const actual = objectql(data, '');
+  const expected = data;
+
+  t.deepEqual(actual, expected);
+});
+
+test('it should return an empty object if the query is an empty object', (t) => {
+  t.plan(1);
+  const data = {
+    a: 'a',
+    b: ['b'],
+    c: {
+      d: 'd'
+    }
+  };
+
+  const actual = objectql(data, {});
+  const expected = {};
+
+  t.deepEqual(actual, expected);
+});
+
+
+test('it should pick entire values when the key is true', (t) => {
+  t.plan(1);
+
+  const data = {
+    a: 'a',
+    b: [1, 2, 3],
+    c: {
+      d: {
+        e: 'f'
+      }
+    },
+    g: 'meh',
+    h: false
+  };
+  const query = {
+    a: true,
+    b: true,
+    c: true,
+    g: true,
+    h: true
+  };
+
+  const actual = objectql(data, query);
+  const expected = Object.assign({}, data);
+
+  t.deepEqual(actual, expected);
+});
+
+test('it should operate on other keys in the trimmer object recursively', (t) => {
   t.plan(1);
 
   const data = {
@@ -74,29 +115,29 @@ test('it should operate on other keys in the trimmer object recursively', functi
         meh: 'to be trimed',
         d: 'd'
       }
-    },
+    }
   };
-  const actual = trimObject(data, {
-    $whiteList: ['b'],
+  const query = {
     b: {
-      $whiteList: ['c'],
       c: {
-        $whiteList: ['d']
+        d: true
       }
     }
-  });
+  };
+
+  const actual = objectql(data, query);
   const expected = {
     b: {
       c: {
         d: 'd'
       }
-    },
-  }
+    }
+  };
 
   t.deepEqual(actual, expected);
 });
 
-test('it should operate on other keys in the trimmer object recursively - iterate over arrays', function(t) {
+test('it should iterate over arrays and apply the query for each item', (t) => {
   t.plan(1);
 
   const data = {
@@ -114,17 +155,17 @@ test('it should operate on other keys in the trimmer object recursively - iterat
           d: 'd'
         }
       }
-    ],
+    ]
   };
-  const actual = trimObject(data, {
-    $whiteList: ['b'],
+  const query = {
     b: {
-      $whiteList: ['c'],
       c: {
-        $whiteList: ['d']
+        d: true
       }
     }
-  });
+  };
+
+  const actual = objectql(data, query);
   const expected = {
     b: [
       {
@@ -137,13 +178,13 @@ test('it should operate on other keys in the trimmer object recursively - iterat
           d: 'd'
         }
       }
-    ],
+    ]
   };
 
   t.deepEqual(actual, expected);
 });
 
-test('real life example', function(t) {
+test('real life example', (t) => {
   t.plan(1);
 
   const data = {
@@ -185,17 +226,18 @@ test('real life example', function(t) {
       }
     ]
   };
-  const trimObjectConfig = {
-    $whiteList: ['id', 'items'],
+  const query = {
+    id: true,
     items: {
-      $whiteList: ['modelName', 'url', 'photos'],
+      modelName: true,
+      url: true,
       photos: {
-        $whiteList: ['url']
+        url: true
       }
     }
   };
-  const actual = trimObject(data, trimObjectConfig);
-  const expected =  {
+  const actual = objectql(data, query);
+  const expected = {
     id: '123',
     items: [
       {
@@ -220,5 +262,4 @@ test('real life example', function(t) {
   };
 
   t.deepEqual(actual, expected);
-
 });

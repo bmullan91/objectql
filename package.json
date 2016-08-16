@@ -4,9 +4,16 @@
   "description": "Pick keys from an object, recursively",
   "main": "index.js",
   "scripts": {
-    "test": "tape ./test"
+    "lint": "eslint ./",
+    "test": "npm run lint && tape ./test",
+    "pretty-test": "npm test | faucet"
   },
   "keywords": [
+    "objectql",
+    "object-ql",
+    "objectQL",
+    "graphql",
+    "object-graphql",
     "trim",
     "object",
     "object-trim",
@@ -19,6 +26,21 @@
   "author": "Brian Mullan <bmullan91@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^3.3.1",
+    "eslint-config-airbnb-base": "^5.0.2",
+    "faucet": "0.0.1",
     "tape": "^4.6.0"
+  },
+  "dependencies": {
+    "isobject": "^2.1.0"
+  },
+  "eslintConfig": {
+    "extends": "airbnb-base",
+    "rules": {
+      "comma-dangle": [
+        2,
+        "never"
+      ]
+    }
   }
 }

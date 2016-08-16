@@ -2,5 +2,6 @@
 
 ## TODO
 
-- [ ] confirm API
+- [x] confirm API
+- [ ] benchmark
 - [ ] publish

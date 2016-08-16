@@ -1,43 +1,23 @@
-function pick(object, keys) {
-  const possibleKeys = Object.keys(object);
+const isObject = require('isobject');
 
-  return keys
-    .filter(function(key) {
-      return !!~possibleKeys.indexOf(key);
-    })
-    .reduce(function(newObject, key) {
-      newObject[key] = object[key];
-      return newObject;
-    }, {});
-}
-
-module.exports = function trimObject(data, trimmer) {
-  if(!data || !trimmer) {
-    return data;
+module.exports = function objectql(obj, query) {
+  if (!obj || !query) {
+    return obj;
   }
 
-  if(!Array.isArray(trimmer.$whiteList)) {
-    throw new Error('trimmer.$whiteList should be an array of strings');
+  if (Array.isArray(obj)) {
+    return obj.map((item) => objectql(item, query));
   }
 
-  var newObject = {};
+  const newObject = {};
 
-  if(trimmer.$whiteList) {
-    newObject = pick(data, trimmer.$whiteList);
-  }
-
-  const childTrimmers = Object.keys(trimmer).filter(function(key) {
-    return key !== '$whiteList' && !!newObject[key];
-  });
-
-  childTrimmers.forEach(function(key) {
-    if(Array.isArray(newObject[key])) {
-      newObject[key] = newObject[key].map(function(arrayItem) {
-        return trimObject(arrayItem, trimmer[key]);
-      });
-    } else {
-      newObject[key] = trimObject(newObject[key], trimmer[key]);
+  Object.keys(query).forEach((key) => {
+    if (query[key] === true) {
+      newObject[key] = obj[key];
+    } else if (isObject(query[key])) {
+      newObject[key] = objectql(obj[key], query[key]);
     }
+    // ignore everything else
   });
 
   return newObject;
