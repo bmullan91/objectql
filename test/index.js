@@ -1,9 +1,9 @@
 /* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
-const tape = require('tape');
+const tap = require('tap');
 const objectql = require('../');
 
 // shortcuts
-const test = tape.test;
+const test = tap.test;
 
 test('it should return the same data if its falsey', (t) => {
   t.plan(1);

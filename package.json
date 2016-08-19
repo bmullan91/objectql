@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint ./",
-    "test": "npm run lint && tape ./test",
-    "pretty-test": "npm test | faucet"
+    "test": "npm run lint && tap ./test/*.js --cov"
   },
   "keywords": [
     "objectql",
@@ -28,8 +27,7 @@
   "devDependencies": {
     "eslint": "^3.3.1",
     "eslint-config-airbnb-base": "^5.0.2",
-    "faucet": "0.0.1",
-    "tape": "^4.6.0"
+    "tap": "^6.3.2"
   },
   "dependencies": {
     "isobject": "^2.1.0"
