@@ -27,6 +27,7 @@
   "devDependencies": {
     "eslint": "^3.3.1",
     "eslint-config-airbnb-base": "^5.0.2",
+    "eslint-plugin-import": "^1.13.0",
     "tap": "^6.3.2"
   },
   "dependencies": {
