@@ -9,19 +9,23 @@ module.exports = function objectql(source, query) {
     return source.map((item) => objectql(item, query));
   }
 
-  const newObject = {};
   const sourceKeys = Object.keys(source);
 
-  Object.keys(query)
+  return Object.keys(query)
     .filter((key) => !!~sourceKeys.indexOf(key))
-    .forEach((key) => {
+    .reduce((newSource, key) => {
       if (query[key] === true) {
-        newObject[key] = source[key];
-      } else if (isObject(query[key])) {
-        newObject[key] = objectql(source[key], query[key]);
+        return Object.assign({}, newSource, {
+          [key]: source[key]
+        });
       }
-      // ignore everything else
-    });
 
-  return newObject;
+      if (isObject(query[key])) {
+        return Object.assign({}, newSource, {
+          [key]: objectql(source[key], query[key])
+        });
+      }
+
+      return newSource;
+    }, {});
 };
