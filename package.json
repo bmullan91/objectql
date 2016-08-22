@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Pick keys from an object, recursively",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/bmullan91/objectql.git"
+  },
   "scripts": {
     "lint": "eslint ./",
     "test": "npm run lint && tap ./test/*.js --cov",
