@@ -37,12 +37,15 @@ objectql({ a: 'a', b: 'b' }, query); // returns { a: 'a' }
 objectql([{ a: 'a', b: 'b' }, { b: 'b', c: 'c' }], query); // returns [{ a: 'a' }, {}]
 ```
 
-__query__ must be an object, and only the keys where the value is `true` will be used.
+__query__ must be an object, and only the keys where the value is `true` will be used. If an object is used as a key's value it will apply that object as the `query` param to that part of the source object recursively.
 
 ```js
 const source = {
   a: 'a',
-  b: 'b'
+  b: {
+    c: 'c',
+    d: 'd'
+  }
 };
 
 // invalid queries
@@ -54,7 +57,7 @@ objectql(source, true); // returns source
 objectql(source, false); // returns source
 objectql(source, function noop() {}); // returns source
 
-// ignored query keys
+// ignored query key values
 objectql(source, { a: null }); // returns {}
 objectql(source, { a: undefined }); // returns {}
 objectql(source, { a: '' }); // returns {}
@@ -63,10 +66,10 @@ objectql(source, { a: false }); // returns {}
 objectql(source, { a: function noop() {} }); // returns {}
 
 
-// valid queries
+// valid query key values
 objectql(source, { a: true }); // returns { a: 'a' }
-objectql(source, { b: true }); // returns { b: 'b' }
-objectql(source, { a: true, b: true }); // returns { a: 'a', b: 'b' }
+objectql(source, { b: true }); // returns { b: { c: 'c', d: 'd' } }
+objectql(source, { a: true, b: { c: true } }); // returns { a: 'a', b: { c: 'c' } }
 ```
 
 ## examples
@@ -75,15 +78,23 @@ The query object follows a similar pattern to a 'simple' graphql query, for each
 
 ```js
 const source = {
-  id: 'abc123'
+  id: 'abc123',
   name: 'Brian',
   age: 24,
-  username: 'bmullan91'
+  username: 'bmullan91',
+  location: {
+    address: 'The Cupboard Under the Stairs',
+    city: 'Belfast',
+    postCode: 'XYZ 123'
+  }
 };
 
 const query = {
   id: true,
-  username: true
+  username: true,
+  location: {
+    postCode: true
+  }
 };
 
 const result = objectql(source, query);
@@ -92,7 +103,10 @@ const result = objectql(source, query);
 
 {
   id: 'abc123',
-  username: 'bmullan91'
+  username: 'bmullan91',
+  location: {
+    postCode: 'XYZ 123'
+  }
 }
 ```
 
@@ -173,7 +187,7 @@ const result = objectql(source, query);
 ]
 ```
 
-__falsey values__
+__invalid values__
 
 If the source object is not an object or an array it will be returned back as the result.
 
