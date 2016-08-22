@@ -31,10 +31,10 @@ objectql(function noop() {}, query); // returns noop function
 
 // valid source values
 objectql({}, query); // returns {}
-objectql({ b: 'b', c: 'c' }, query); // returns {}
-objectql({ a: 'a', b: 'b'}, query); // returns { a: 'a'}
 objectql([], query); // returns []
-objectql([{ a: 'a', b: 'b'}, { b: 'b', c: 'c' }], query); // returns [{ a: 'a'}, {}]
+objectql({ b: 'b', c: 'c' }, query); // returns {}
+objectql({ a: 'a', b: 'b' }, query); // returns { a: 'a' }
+objectql([{ a: 'a', b: 'b' }, { b: 'b', c: 'c' }], query); // returns [{ a: 'a' }, {}]
 ```
 
 __query__ must be an object, and only the keys where the value is `true` will be used.
@@ -45,7 +45,7 @@ const source = {
   b: 'b'
 };
 
-// invalid query values
+// invalid queries
 objectql(source, null); // returns source
 objectql(source, undefined); // returns source
 objectql(source, ''); // returns source
@@ -53,15 +53,17 @@ objectql(source, 10); // returns source
 objectql(source, true); // returns source
 objectql(source, false); // returns source
 objectql(source, function noop() {}); // returns source
-objectql(source, { a: null }); // returns source
-objectql(source, { a: undefined }); // returns source
-objectql(source, { a: '' }); // returns source
-objectql(source, { a: 10 }); // returns source
-objectql(source, { a: false }); // returns source
-objectql(source, { a: function noop() {} }); // returns source
+
+// ignored query keys
+objectql(source, { a: null }); // returns {}
+objectql(source, { a: undefined }); // returns {}
+objectql(source, { a: '' }); // returns {}
+objectql(source, { a: 10 }); // returns {}
+objectql(source, { a: false }); // returns {}
+objectql(source, { a: function noop() {} }); // returns {}
 
 
-// valid query values
+// valid queries
 objectql(source, { a: true }); // returns { a: 'a' }
 objectql(source, { b: true }); // returns { b: 'b' }
 objectql(source, { a: true, b: true }); // returns { a: 'a', b: 'b' }
