@@ -1,24 +1,27 @@
 const isObject = require('isobject');
 
-module.exports = function objectql(obj, query) {
-  if (!obj || !query) {
-    return obj;
+module.exports = function objectql(source, query) {
+  if ((!Array.isArray(source) && !isObject(source)) || !isObject(query)) {
+    return source;
   }
 
-  if (Array.isArray(obj)) {
-    return obj.map((item) => objectql(item, query));
+  if (Array.isArray(source)) {
+    return source.map((item) => objectql(item, query));
   }
 
   const newObject = {};
+  const sourceKeys = Object.keys(source);
 
-  Object.keys(query).forEach((key) => {
-    if (query[key] === true) {
-      newObject[key] = obj[key];
-    } else if (isObject(query[key])) {
-      newObject[key] = objectql(obj[key], query[key]);
-    }
-    // ignore everything else
-  });
+  Object.keys(query)
+    .filter((key) => !!~sourceKeys.indexOf(key))
+    .forEach((key) => {
+      if (query[key] === true) {
+        newObject[key] = source[key];
+      } else if (isObject(query[key])) {
+        newObject[key] = objectql(source[key], query[key]);
+      }
+      // ignore everything else
+    });
 
   return newObject;
 };

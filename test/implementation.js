@@ -5,71 +5,54 @@ const objectql = require('../');
 // shortcuts
 const test = tap.test;
 
-test('it should return the same data if its falsey', (t) => {
+test('it ignore query keys that arent present in source object', (t) => {
   t.plan(1);
-  const data = null;
-  const actual = objectql(data);
-  const expected = data;
-  t.equal(actual, expected);
-});
-
-test('it should return the same object if the query is undefined', (t) => {
-  t.plan(1);
-  const data = {
+  const source = {
     a: 'a',
-    b: ['b'],
-    c: {
-      d: 'd'
+    b: 'b'
+  };
+  const query = {
+    a: true,
+    x: {
+      y: {
+        z: true
+      }
     }
   };
-  const actual = objectql(data);
-  const expected = data;
+
+  const actual = objectql(source, query);
+  const expected = {
+    a: 'a'
+  };
 
   t.deepEqual(actual, expected);
 });
 
-test('it should return the same object if the query is null', (t) => {
+test('it should return null if is source is null', (t) => {
   t.plan(1);
-  const data = {
+  const source = {
     a: 'a',
-    b: ['b'],
-    c: {
-      d: 'd'
+    b: 'b',
+    x: {
+      y: null
     }
   };
-  const actual = objectql(data, null);
-  const expected = data;
-
-  t.deepEqual(actual, expected);
-});
-
-test('it should return the same object if the query is an empty string', (t) => {
-  t.plan(1);
-  const data = {
-    a: 'a',
-    b: ['b'],
-    c: {
-      d: 'd'
-    }
-  };
-  const actual = objectql(data, '');
-  const expected = data;
-
-  t.deepEqual(actual, expected);
-});
-
-test('it should return an empty object if the query is an empty object', (t) => {
-  t.plan(1);
-  const data = {
-    a: 'a',
-    b: ['b'],
-    c: {
-      d: 'd'
+  const query = {
+    a: true,
+    x: {
+      y: {
+        z: true
+      }
     }
   };
 
-  const actual = objectql(data, {});
-  const expected = {};
+  const actual = objectql(source, query);
+  const expected = {
+    a: 'a',
+    x: {
+      y: null
+    }
+  };
 
   t.deepEqual(actual, expected);
 });
@@ -78,7 +61,7 @@ test('it should return an empty object if the query is an empty object', (t) => 
 test('it should pick entire values when the key is true', (t) => {
   t.plan(1);
 
-  const data = {
+  const source = {
     a: 'a',
     b: [1, 2, 3],
     c: {
@@ -97,16 +80,16 @@ test('it should pick entire values when the key is true', (t) => {
     h: true
   };
 
-  const actual = objectql(data, query);
-  const expected = Object.assign({}, data);
+  const expected = Object.assign({}, source);
+  const actual = objectql(source, query);
 
   t.deepEqual(actual, expected);
 });
 
-test('it should operate on other keys in the trimmer object recursively', (t) => {
+test('it should operate on other keys in the query object recursively', (t) => {
   t.plan(1);
 
-  const data = {
+  const source = {
     meh: 'to be trimed',
     a: 'a',
     b: {
@@ -125,7 +108,7 @@ test('it should operate on other keys in the trimmer object recursively', (t) =>
     }
   };
 
-  const actual = objectql(data, query);
+  const actual = objectql(source, query);
   const expected = {
     b: {
       c: {
@@ -140,7 +123,7 @@ test('it should operate on other keys in the trimmer object recursively', (t) =>
 test('it should iterate over arrays and apply the query for each item', (t) => {
   t.plan(1);
 
-  const data = {
+  const source = {
     meh: 'to be trimed',
     b: [
       {
@@ -165,7 +148,7 @@ test('it should iterate over arrays and apply the query for each item', (t) => {
     }
   };
 
-  const actual = objectql(data, query);
+  const actual = objectql(source, query);
   const expected = {
     b: [
       {
@@ -184,10 +167,80 @@ test('it should iterate over arrays and apply the query for each item', (t) => {
   t.deepEqual(actual, expected);
 });
 
+test('it should recursively iterate over arrays', (t) => {
+  t.plan(1);
+
+  const source = [
+    [
+      {
+        a: 'a',
+        b: {
+          c: [
+            {
+              d: 'd',
+              e: 'meh'
+            }
+          ]
+        },
+        z: 123
+      },
+      {
+        a: 'a',
+        b: {
+          c: [
+            {
+              d: 'd',
+              e: 'meh'
+            }
+          ]
+        },
+        z: 456
+      }
+    ]
+  ];
+
+  const query = {
+    a: true,
+    b: {
+      c: {
+        d: true
+      }
+    }
+  };
+
+  const actual = objectql(source, query);
+  const expected = [
+    [
+      {
+        a: 'a',
+        b: {
+          c: [
+            {
+              d: 'd'
+            }
+          ]
+        }
+      },
+      {
+        a: 'a',
+        b: {
+          c: [
+            {
+              d: 'd'
+            }
+          ]
+        }
+      }
+    ]
+  ];
+
+  t.deepEqual(actual, expected);
+});
+
 test('real life example', (t) => {
   t.plan(1);
 
-  const data = {
+  const source = {
     id: '123',
     modelName: 'model',
     url: 'url',
@@ -236,7 +289,7 @@ test('real life example', (t) => {
       }
     }
   };
-  const actual = objectql(data, query);
+  const actual = objectql(source, query);
   const expected = {
     id: '123',
     items: [
