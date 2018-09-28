@@ -16,9 +16,9 @@ Performance. Reducing an API payload, picking only what you actually need means 
 __source__ must be an object or an array:
 
 ```js
-const query = {
-  a: true
-};
+const query = `{
+  a
+}`;
 
 // invalid source values
 objectql(null, query); // returns null
@@ -37,7 +37,7 @@ objectql({ a: 'a', b: 'b' }, query); // returns { a: 'a' }
 objectql([{ a: 'a', b: 'b' }, { b: 'b', c: 'c' }], query); // returns [{ a: 'a' }, {}]
 ```
 
-__query__ must be an object, and only the keys where the value is `true` will be used. If an object is used as a key's value it will apply that object as the `query` param to that part of the source object recursively.
+__query__ must be a concise string of key names, like a 'simple' graphql query.
 
 ```js
 const source = {
@@ -67,14 +67,14 @@ objectql(source, { a: function noop() {} }); // returns {}
 
 
 // valid query key values
-objectql(source, { a: true }); // returns { a: 'a' }
-objectql(source, { b: true }); // returns { b: { c: 'c', d: 'd' } }
-objectql(source, { a: true, b: { c: true } }); // returns { a: 'a', b: { c: 'c' } }
+objectql(source, '{ a }'); // returns { a: 'a' }
+objectql(source, '{ b }'); // returns { b: { c: 'c', d: 'd' } }
+objectql(source, '{ a b { c } }'); // returns { a: 'a', b: { c: 'c' } }
 ```
 
 ## examples
 
-The query object follows a similar pattern to a 'simple' graphql query, for each key in the query `objectql` will pick the matching key from the source object when the query value is `true`.
+The query object follows a similar pattern to a 'simple' graphql query, for each key in the query `objectql` will pick the matching key from the source object.
 
 ```js
 const source = {
@@ -89,13 +89,13 @@ const source = {
   }
 };
 
-const query = {
-  id: true,
-  username: true,
-  location: {
-    postCode: true
+const query = `{
+  id
+  username
+  location {
+    postCode
   }
-};
+}`;
 
 const result = objectql(source, query);
 
@@ -147,13 +147,13 @@ const source = [
     }
   }
 ];
-const query = {
-  b: {
-    c: {
-      d: true
+const query = `{
+  b {
+    c {
+      d
     }
   }
-};
+}`;
 
 const result = objectql(source, query);
 
@@ -193,13 +193,13 @@ If the source object is not an object or an array it will be returned back as th
 
 ```js
 const source = null;
-const query = {
-  a: {
-    b: {
-      c: true
+const query = `{
+  a {
+    b {
+      c
     }
   }
-};
+}`;
 
 const result = objectql(source, query);
 
@@ -216,13 +216,13 @@ const source = {
     b: null
   }
 };
-const query = {
+const query = `{
   a: {
     b: {
-      c: true
+      c
     }
   }
-};
+}`;
 
 const result = objectql(source, query);
 
@@ -279,16 +279,16 @@ const source = {
     }
   ]
 };
-const query = {
-  id: true,
-  items: {
-    modelName: true,
-    url: true,
-    photos: {
-      url: true
+const query = `{
+  id
+  items {
+    modelName
+    url
+    photos {
+      url
     }
   }
-};
+}`;
 const result = objectql(source, query);
 
 // result will be:
@@ -314,7 +314,7 @@ const result = objectql(source, query);
       ]
     }
   ]
-};
+}
 ```
 
 Still not sure, take a look at the [tests](https://github.com/bmullan91/objectql/tree/master/test) for more examples.
