@@ -93,7 +93,7 @@ test('it should operate on other keys in the query object recursively', t => {
       }
     }
   };
-  const query = '{ b { c { d } } }';
+  const query = '{b{c{d}}}';
 
   const actual = objectql(source, query);
   const expected = {

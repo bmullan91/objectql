@@ -8,6 +8,7 @@ function parse(query) {
     return JSON.parse(
       query
         .replace(/(?:\r\n|\r|\n)|,|:/g, ' ')
+        .replace(/([{}])/g, ' $1 ')
         .replace(/ +/g, ' ')
         .trim()
         .replace(/([^ {}]+) /g, '"$1" ')
