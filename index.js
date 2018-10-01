@@ -27,31 +27,30 @@ module.exports = function objectql(source, query) {
     return source;
   }
 
-  // eslint-disable-next-line no-param-reassign
-  query = parse(query);
+  const parsedQuery = parse(query);
 
-  if (!isObject(query)) {
+  if (!isObject(parsedQuery)) {
     return source;
   }
 
   if (Array.isArray(source)) {
-    return source.map(item => objectql(item, query));
+    return source.map(item => objectql(item, parsedQuery));
   }
 
   const sourceKeys = Object.keys(source);
 
-  return Object.keys(query)
+  return Object.keys(parsedQuery)
     .filter(key => !!~sourceKeys.indexOf(key))
     .reduce((newSource, key) => {
-      if (query[key] === true) {
+      if (parsedQuery[key] === true) {
         return Object.assign({}, newSource, {
           [key]: source[key]
         });
       }
 
-      if (isObject(query[key])) {
+      if (isObject(parsedQuery[key])) {
         return Object.assign({}, newSource, {
-          [key]: objectql(source[key], query[key])
+          [key]: objectql(source[key], parsedQuery[key])
         });
       }
 
