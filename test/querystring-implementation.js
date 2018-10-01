@@ -301,3 +301,40 @@ test('real life example', t => {
 
   t.deepEqual(actual, expected);
 });
+
+test('it should parse with space insensitivity', t => {
+  t.plan(5);
+
+  const source = {
+    meh: 'to be trimed',
+    a: 'a',
+    b: {
+      meh: 'to be trimed',
+      c: 'c',
+      d: {
+        meh: 'to be trimed',
+        e: 'e'
+      }
+    }
+  };
+  const queries = ['{a}', '{ a}', '{a }', '{ a }'];
+  let expected = { a: 'a' };
+  for (const query of queries) {
+    const actual = objectql(source, query);
+    t.deepEqual(actual, expected);
+  }
+
+  const query = '{a b{ c d { e }} }';
+  const actual = objectql(source, query);
+  expected = {
+    a: 'a',
+    b: {
+      c: 'c',
+      d: {
+        e: 'e'
+      }
+    }
+  };
+
+  t.deepEqual(actual, expected);
+});
