@@ -37,7 +37,7 @@ objectql({ a: 'a', b: 'b' }, query); // returns { a: 'a' }
 objectql([{ a: 'a', b: 'b' }, { b: 'b', c: 'c' }], query); // returns [{ a: 'a' }, {}]
 ```
 
-__query__ must be a concise string of key names, like a 'simple' graphql query.
+__query__ can be either a string or an object, see below for examples.
 
 ```js
 const source = {
