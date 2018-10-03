@@ -66,10 +66,17 @@ objectql(source, { a: false }); // returns {}
 objectql(source, { a: function noop() {} }); // returns {}
 
 
-// valid query key values
+// valid query key values using <string> query
 objectql(source, '{ a }'); // returns { a: 'a' }
 objectql(source, '{ b }'); // returns { b: { c: 'c', d: 'd' } }
 objectql(source, '{ a b { c } }'); // returns { a: 'a', b: { c: 'c' } }
+
+// valid query key values using <object> query
+objectql(source, { a: true }); // returns { a: 'a' }
+objectql(source, { b: true }); // returns { b: { c: 'c', d: 'd' } }
+objectql(source, { a: true, b: { c: true } }); // returns { a: 'a', b: { c: 'c' } }
+
+
 ```
 
 ## examples
