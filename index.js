@@ -18,7 +18,9 @@ function parse(query) {
         .replace(/" }/g, '":true }')
     );
   } catch (error) {
-    return null;
+    // eslint-disable-next-line no-console
+    console.error(`Invalid objectql query: ${query}`);
+    throw error;
   }
 }
 
