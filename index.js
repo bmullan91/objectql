@@ -1,7 +1,7 @@
 const isObject = require('isobject');
 
 function parse(query) {
-  if (isObject(query)) {
+  if (typeof query !== 'string') {
     return query;
   }
   try {
