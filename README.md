@@ -51,7 +51,6 @@ const source = {
 // invalid queries
 objectql(source, null); // returns source
 objectql(source, undefined); // returns source
-objectql(source, ''); // returns source
 objectql(source, 10); // returns source
 objectql(source, true); // returns source
 objectql(source, false); // returns source
@@ -77,6 +76,9 @@ objectql(source, { b: true }); // returns { b: { c: 'c', d: 'd' } }
 objectql(source, { a: true, b: { c: true } }); // returns { a: 'a', b: { c: 'c' } }
 
 
+// invalid string queries
+objectql(source, '') // throws
+objectql(source, '{ hello }}') // throws
 ```
 
 ## examples
