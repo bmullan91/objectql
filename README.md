@@ -74,7 +74,7 @@ objectql(source, '{ a b { c } }'); // returns { a: 'a', b: { c: 'c' } }
 
 ## examples
 
-The query object follows a similar pattern to a 'simple' graphql query, for each key in the query `objectql` will pick the matching key from the source object.
+The query object follows a similar pattern to a 'simple' graphql query, for each key in the query `objectql` will pick the matching key from the source object. In the examples below we'll be using the string graphql-like queries.
 
 ```js
 const source = {
