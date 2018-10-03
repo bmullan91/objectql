@@ -338,3 +338,17 @@ test('it should parse with space insensitivity', t => {
 
   t.deepEqual(actual, expected);
 });
+
+test('it should throw if the query is an unparseable string', t => {
+  t.plan(2);
+  const source = {
+    key: 'value'
+  };
+  const queries = ['', '{ hello }}'];
+
+  for (const query of queries) {
+    t.throws(() => {
+      objectql(source, query);
+    });
+  }
+});
