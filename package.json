@@ -28,7 +28,10 @@
     "data-trim",
     "data-trimmer"
   ],
-  "author": "Brian Mullan <bmullan91@gmail.com>",
+  "author": "Brian Mullan <bmullan91@gmail.com> (https://twitter.com/bmullan91)",
+  "contributors": [
+    "Buster Collings <> (https://github.com/busterc)"
+  ],
   "license": "MIT",
   "devDependencies": {
     "eslint": "^3.3.1",
