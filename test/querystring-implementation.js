@@ -303,7 +303,7 @@ test('real life example', t => {
 });
 
 test('it should parse with space insensitivity', t => {
-  t.plan(5);
+  t.plan(4);
 
   const source = {
     meh: 'to be trimed',
@@ -318,15 +318,33 @@ test('it should parse with space insensitivity', t => {
     }
   };
   const queries = ['{a}', '{ a}', '{a }', '{ a }'];
-  let expected = { a: 'a' };
+  const expected = { a: 'a' };
+
   for (const query of queries) {
     const actual = objectql(source, query);
     t.deepEqual(actual, expected);
   }
+});
+
+test('it should parse with space insensitivity in a deep object query', t => {
+  t.plan(1);
+
+  const source = {
+    meh: 'to be trimed',
+    a: 'a',
+    b: {
+      meh: 'to be trimed',
+      c: 'c',
+      d: {
+        meh: 'to be trimed',
+        e: 'e'
+      }
+    }
+  };
 
   const query = '{a b{ c d { e }} }';
   const actual = objectql(source, query);
-  expected = {
+  const expected = {
     a: 'a',
     b: {
       c: 'c',
