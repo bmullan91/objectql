@@ -1,6 +1,6 @@
 {
   "name": "objectql",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "Pick keys from an object, recursively",
   "main": "index.js",
   "repository": {
